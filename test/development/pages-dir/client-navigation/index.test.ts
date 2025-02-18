@@ -1,14 +1,6 @@
 /* eslint-env jest */
 
-import {
-  assertHasRedbox,
-  assertNoRedbox,
-  fetchViaHTTP,
-  getRedboxSource,
-  getRedboxHeader,
-  waitFor,
-  check,
-} from 'next-test-utils'
+import { assertNoRedbox, fetchViaHTTP, waitFor, check } from 'next-test-utils'
 import webdriver, { BrowserInterface } from 'next-webdriver'
 import path from 'path'
 import { nextTestSetup } from 'e2e-utils'
@@ -65,10 +57,17 @@ describe('Client Navigation', () => {
           })
         },
       })
-      await assertHasRedbox(browser)
-      expect(await getRedboxHeader(browser)).toContain(
-        'No children were passed to <Link> with `href` of `/about` but one child is required'
-      )
+
+      await expect(browser).toDisplayRedbox(`
+       {
+         "count": 1,
+         "description": "Error: No children were passed to <Link> with \`href\` of \`/about\` but one child is required https://nextjs.org/docs/messages/link-no-children",
+         "environmentLabel": null,
+         "label": "Runtime Error",
+         "source": undefined,
+         "stack": [],
+       }
+      `)
       expect(pageErrors).toEqual([
         expect.objectContaining({
           message:
@@ -302,10 +301,16 @@ describe('Client Navigation', () => {
           },
         })
         await browser.elementByCss('#empty-props').click()
-        await assertHasRedbox(browser)
-        expect(await getRedboxHeader(browser)).toMatch(
-          /should resolve to an object\. But found "null" instead\./
-        )
+        await expect(browser).toDisplayRedbox(`
+         {
+           "count": 1,
+           "description": "Error: "EmptyInitialPropsPage.getInitialProps()" should resolve to an object. But found "null" instead.",
+           "environmentLabel": null,
+           "label": "Unhandled Runtime Error",
+           "source": undefined,
+           "stack": [],
+         }
+        `)
         expect(pageErrors).toEqual([
           expect.objectContaining({
             message:
@@ -1414,11 +1419,20 @@ describe('Client Navigation', () => {
             })
           },
         })
-        await assertHasRedbox(browser)
-        const text = await getRedboxSource(browser)
-        expect(text).toMatch(/An Expected error occurred/)
-        expect(text).toMatch(/pages[\\/]error-inside-browser-page\.js \(5:13\)/)
-
+        await expect(browser).toDisplayRedbox(`
+         {
+           "count": 1,
+           "description": "Error: An Expected error occurred",
+           "environmentLabel": null,
+           "label": "Unhandled Runtime Error",
+           "source": "pages/error-inside-browser-page.js (5:13) @ ErrorInRenderPage.render
+         > 5 |       throw new Error('An Expected error occurred')
+             |             ^",
+           "stack": [
+             "ErrorInRenderPage.render pages/error-inside-browser-page.js (5:13)",
+           ],
+         }
+        `)
         expect(pageErrors).toEqual(
           isReact18
             ? [
@@ -1458,10 +1472,25 @@ describe('Client Navigation', () => {
             },
           }
         )
-        await assertHasRedbox(browser)
-        const text = await getRedboxSource(browser)
-        expect(text).toMatch(/An Expected error occurred/)
-        expect(text).toMatch(/error-in-the-browser-global-scope\.js \(2:9\)/)
+
+        await expect(browser).toDisplayRedbox(`
+         {
+           "count": 1,
+           "description": "Error: An Expected error occurred",
+           "environmentLabel": null,
+           "label": "Unhandled Runtime Error",
+           "source": "pages/error-in-the-browser-global-scope.js (2:9) @ eval
+         > 2 |   throw new Error('An Expected error occurred')
+             |         ^",
+           "stack": [
+             "eval pages/error-in-the-browser-global-scope.js (2:9)",
+             "<FIXME-file-protocol>",
+             "<FIXME-file-protocol>",
+             "<FIXME-file-protocol>",
+             "<FIXME-file-protocol>",
+           ],
+         }
+        `)
         expect(pageErrors).toEqual([
           expect.objectContaining({ message: 'An Expected error occurred' }),
         ])
