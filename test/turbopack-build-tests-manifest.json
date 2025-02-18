@@ -14317,11 +14317,10 @@
         "streaming dev dev should not stream to crawlers or google pagerender bot",
         "streaming dev dev should render 500 error correctly",
         "streaming dev dev should render fallback if error raised from suspense during streaming",
-        "streaming dev dev should support streaming for fizz response"
-      ],
-      "failed": [
+        "streaming dev dev should support streaming for fizz response",
         "production mode streaming prod prod should render 500 error correctly"
       ],
+      "failed": [],
       "pending": [],
       "flakey": [],
       "runtimeError": false
