@@ -48,9 +48,18 @@ describe('app-dir - owner-stack', () => {
      }
     `)
 
-    expect(normalizeBrowserConsoleStackTrace(errorStack)).toMatchInlineSnapshot(
-      `undefined`
-    )
+    expect(normalizeBrowserConsoleStackTrace(errorStack))
+      .toMatchInlineSnapshot(`
+     "Error: browser error
+     at useThrowError 
+     at useErrorHook 
+     at Page 
+     at ReactDevOverlay 
+     at HotReload 
+     at Router 
+     at AppRouter 
+     at ServerRoot"
+    `)
   })
 
   it('should log stitched error for browser caught errors', async () => {
@@ -129,9 +138,18 @@ describe('app-dir - owner-stack', () => {
      }
     `)
 
-    expect(normalizeBrowserConsoleStackTrace(errorStack)).toMatchInlineSnapshot(
-      `undefined`
-    )
+    expect(normalizeBrowserConsoleStackTrace(errorStack))
+      .toMatchInlineSnapshot(`
+     "Error: ssr error
+     at useThrowError 
+     at useErrorHook 
+     at Page 
+     at ReactDevOverlay 
+     at HotReload 
+     at Router 
+     at AppRouter 
+     at ServerRoot"
+    `)
   })
 
   it('should capture unhandled promise rejections', async () => {
