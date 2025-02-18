@@ -1208,14 +1208,20 @@ export default abstract class Server<
 
           // Normalize all the query params to remove the prefixes.
           const routeParamKeys = new Set<string>()
+
+          // Create a copy of the query params to avoid mutating the original
+          // object. This prevents any overlapping query params that have the
+          // same normalized key from causing issues.
+          const queryParams = { ...parsedUrl.query }
+
           for (const [key, value] of Object.entries(parsedUrl.query)) {
             if (typeof value === 'undefined') continue
 
             const normalizedKey = normalizeNextQueryParam(key)
             if (normalizedKey) {
-              parsedUrl.query[normalizedKey] = value
+              queryParams[normalizedKey] = value
               routeParamKeys.add(normalizedKey)
-              delete parsedUrl.query[key]
+              delete queryParams[key]
             }
           }
 
@@ -1224,7 +1230,7 @@ export default abstract class Server<
             let params: ParsedUrlQuery | false = {}
 
             let paramsResult = utils.normalizeDynamicRouteParams(
-              parsedUrl.query,
+              queryParams,
               false
             )
 
@@ -1363,9 +1369,6 @@ export default abstract class Server<
               ...rewriteParamKeys,
               ...Object.keys(utils.defaultRouteRegex?.groups || {}),
             ])
-          }
-          for (const key of routeParamKeys) {
-            delete parsedUrl.query[key]
           }
           parsedUrl.pathname = matchedPath
           url.pathname = parsedUrl.pathname
