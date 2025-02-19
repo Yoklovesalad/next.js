@@ -1,7 +1,7 @@
-import React from 'react'
-
-export default function Page() {
-  return <h1>My Page</h1>
-}
-
-export const dynamic = 'force-dynamic'
+export default function Home() {
+  return (
+    <main>
+      <h1>ระบบ AI Hydroponics พร้อมใช้งานแล้ว! 🌱</h1>
+      <p>ควบคุมและตรวจสอบระบบน้ำ-อาหารแบบอัจฉริยะ</p>
+    </main>
+  );
